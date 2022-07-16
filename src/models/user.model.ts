@@ -2,7 +2,7 @@ import db from '../db/db';
 import { DB_ERROR_DUP_KEY } from '../constants';
 
 class UserModel {
-  async createuser (first_name: string, last_name:string, username: string, email: string, hashedPassword: string) {
+  async createUser (first_name: string, last_name:string, username: string, email: string, hashedPassword: string) {
     let result: number[];
 
     try {
@@ -27,6 +27,25 @@ class UserModel {
         throw new Error("Error creating user account. Please try again later.");
 
       }
+    }
+    
+    return result;
+  }
+
+  async updateUserVerifiedActivatedInfo (userId: number, isEmailVerified: boolean, isActive: boolean) {
+    let result: number[];
+
+    try {
+      result = await db('users')
+      .where({id: userId})
+      .update({
+        'is_email_verified': isEmailVerified,
+        'is_active': isActive
+      });
+
+    } catch (err: any) {
+
+        throw new Error("Error updating user account. Please try again later.");
     }
     
     return result;

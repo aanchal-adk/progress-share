@@ -1,17 +1,49 @@
-import UserService from '../services/user.service';
+require('dotenv').config();
+import nodemailer from 'nodemailer';
 import { Request, Response } from 'express';
+
+import { getJwt } from  '../helpers/jwt.helper';
+import UserService from '../services/user.service';
 
 class UserController {
   async createUser (req: Request, res: Response) {
 
     const {first_name, last_name, username, email, password} = req.body;
+
     try {
       const result = await UserService.createUser(first_name, last_name, username, email, password);
+
+      const userId = result[0];
+
+      const confirmationCode = getJwt({userId});
+      const confirmUrl = process.env.BASE_URL + `/confirmation-code/${confirmationCode}`;
+
+      const mailOptions: nodemailer.SendMailOptions = {
+        to: email,
+        subject: 'Progress Share: Confirm Email',
+        html: `<p>Please click this link to confirm your email: <a href="${confirmUrl}">${confirmUrl}</a></p>`,
+      };
+      
+      res.locals.transporter.sendMail(mailOptions);
       
       res.status(201).json(result);
 
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error creating user account.";
+      res.status(500).json(message);
+    }
+  }
+
+  async confirmUserEmail (req: Request, res: Response) {
+
+    const {token} = req.params;
+    try {
+      const result = await UserService.confirmUserEmailAndActivate(token);
+
+      res.status(201).json(result);
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error updating user account.";
       res.status(500).json(message);
     }
   }
