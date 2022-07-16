@@ -40,10 +40,24 @@ class UserController {
     try {
       const result = await UserService.confirmUserEmailAndActivate(token);
 
-      res.status(201).json(result);
+      res.status(200).json(result);
 
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error updating user account.";
+      res.status(500).json(message);
+    }
+  }
+
+  async login (req: Request, res: Response) {
+
+    const {email,  password} = req.body;
+    try {
+      const result = await UserService.login(email, password);
+
+      res.status(200).json(result);
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error logging in to the account.";
       res.status(500).json(message);
     }
   }

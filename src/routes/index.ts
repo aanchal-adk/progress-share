@@ -5,9 +5,12 @@ import UserController from '../controllers/user.controller';
 const router = express.Router();
 
 // signup route
-router.post('/user', UserController.createUser);
+router.post('/signup', UserController.createUser);
 
 // email confirmation route
 router.get('/confirmation-code/:token', userController.confirmUserEmail);
+
+// signin route
+router.post('/login', UserController.login);
 
 module.exports = router;

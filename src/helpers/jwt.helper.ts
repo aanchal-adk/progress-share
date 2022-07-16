@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
 require('dotenv').config();
 
-export function getJwt (payload: { [key: string]: any; }): string {
+export function getJwt (payload: { [key: string]: any; }, expiresIn?: string): string {
   const token = jwt.sign(
     payload,
     process.env.JWT_SECRET as string,
     {
-      expiresIn: process.env.JWT_EXPIRES_IN
+      expiresIn: expiresIn ? expiresIn : process.env.JWT_EXPIRES_IN
     }
   );
 

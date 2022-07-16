@@ -1,6 +1,7 @@
 import UserModel from '../models/user.model';
-import { verifyJwt } from  '../helpers/jwt.helper';
-import { getHashForText } from '../helpers/encrypt.helper';
+import { getJwt, verifyJwt } from  '../helpers/jwt.helper';
+import { getHashForText, comparePlainAndHash } from '../helpers/encrypt.helper';
+import UserInterface, { LoginResponseInterface } from '../interfaces/user.interface';
 
 class UserService {
   async createUser (first_name: string, last_name: string, username: string, email: string, password: string) {
@@ -25,6 +26,43 @@ class UserService {
     }
 
   }
+
+  async login (email: string, password: string): Promise<LoginResponseInterface> {
+    try {
+      const userInfo: UserInterface = await UserModel.getUserInfo(email);
+
+      const doesMatch = await comparePlainAndHash(password, userInfo.password);
+      
+      if (!doesMatch) {
+        throw new Error('The password doesn not match');
+      }
+
+      if (!userInfo.is_email_verified) {
+        throw new Error("User's email is not verified yet.")
+      }
+
+      if (!userInfo.is_active) {
+        throw new Error('User is inactive');
+      }
+
+      const tokenPayload = {
+        userId: userInfo.id,
+        email: userInfo.email
+      };
+      
+      const accessToken = getJwt(tokenPayload, '1h');
+      const refreshToken = getJwt(tokenPayload, '30d');
+
+      return {
+        accessToken,
+        refreshToken
+      };
+      
+    } catch (err) {
+      throw new Error('Could not log in successfully. ' + (err instanceof Error && err.message ? err.message: ''));
+    }
+  }
+
 }
 
 export default new UserService();

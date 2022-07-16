@@ -5,3 +5,9 @@ export async function getHashForText (text: string): Promise<string> {
 
     return hash;
 }
+
+export async function comparePlainAndHash (plainText: string, hash: string): Promise<boolean> {
+    const doesMatch = await bcrypt.compare(plainText, hash);
+
+    return doesMatch;
+}

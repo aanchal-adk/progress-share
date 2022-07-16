@@ -1,5 +1,6 @@
 import db from '../db/db';
 import { DB_ERROR_DUP_KEY } from '../constants';
+import UserInterface from '../interfaces/user.interface';
 
 class UserModel {
   async createUser (first_name: string, last_name:string, username: string, email: string, hashedPassword: string) {
@@ -49,6 +50,21 @@ class UserModel {
     }
     
     return result;
+  }
+
+  async getUserInfo (userEmail: string): Promise<UserInterface> {
+    let result: UserInterface[];
+
+    try {
+      result = await db('users')
+      .select('*')
+      .where({email: userEmail});
+
+      return result[0];
+
+    } catch (err: any) {
+      throw new Error("Error finding matching account");
+    }
   }
 }
 
