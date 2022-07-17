@@ -1,10 +1,16 @@
+require('dotenv').config();
 import UserModel from '../models/user.model';
 import { getJwt, verifyJwt } from  '../helpers/jwt.helper';
 import { getHashForText, comparePlainAndHash } from '../helpers/encrypt.helper';
-import UserInterface, { LoginResponseInterface } from '../interfaces/user.interface';
+import { 
+  UserInterface,
+  TokenPayloadInterface,
+  LoginResponseInterface,
+  DecodedTokenPayloadInterface
+} from '../interfaces/user.interface';
 
 class UserService {
-  async createUser (first_name: string, last_name: string, username: string, email: string, password: string) {
+  async createUser (first_name: string, last_name: string, username: string, email: string, password: string): Promise<number> {
     const hashedPassword = await getHashForText(password);
 
     return UserModel.createUser(first_name, last_name, username, email, hashedPassword);
@@ -15,14 +21,15 @@ class UserService {
       const decodedPayload = verifyJwt(token);
       
       if (typeof decodedPayload === 'string') {
-        throw new Error(`Could not verify the confirmation code. ${decodedPayload}`);
+        throw new Error(decodedPayload);
       }
 
       const {userId} = decodedPayload;
 
       return UserModel.updateUserVerifiedActivatedInfo(userId, true, true);
-    } catch {
-      throw new Error('Could not verify the confirmation code. Please resend the confirmation code.');
+
+    } catch (err) {
+      throw new Error('Could not verify the confirmation code.' + (err instanceof Error ? err.message : ''));
     }
 
   }
@@ -45,13 +52,13 @@ class UserService {
         throw new Error('User is inactive');
       }
 
-      const tokenPayload = {
+      const tokenPayload: TokenPayloadInterface = {
         userId: userInfo.id,
         email: userInfo.email
       };
       
-      const accessToken = getJwt(tokenPayload, '1h');
-      const refreshToken = getJwt(tokenPayload, '30d');
+      const accessToken = getJwt(tokenPayload, process.env.ACCESS_TOKEN_EXPIRES_IN);
+      const refreshToken = getJwt(tokenPayload, process.env.REFRESH_TOKEN_EXPIRES_IN);
 
       return {
         accessToken,
@@ -60,6 +67,29 @@ class UserService {
       
     } catch (err) {
       throw new Error('Could not log in successfully. ' + (err instanceof Error && err.message ? err.message: ''));
+    }
+  }
+
+  refreshToken (refreshToken: string): string {
+    try {
+      const decodedPayload = verifyJwt(refreshToken) as DecodedTokenPayloadInterface | string;
+
+      if (typeof decodedPayload === 'string') {
+        throw new Error('Could not decode the payload');
+      }
+
+      const tokenPayload: TokenPayloadInterface = {
+        email: decodedPayload.email,
+        userId: decodedPayload.userId
+      };
+      
+      const newAccessToken = getJwt(tokenPayload, process.env.ACCESS_TOKEN_EXPIRES_IN);
+
+      return newAccessToken;
+      
+
+    } catch (err) {
+      throw new Error('Could not refresh token. ' + (err instanceof Error && err.message ? err.message: ''));
     }
   }
 

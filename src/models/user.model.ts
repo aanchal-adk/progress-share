@@ -1,9 +1,9 @@
 import db from '../db/db';
 import { DB_ERROR_DUP_KEY } from '../constants';
-import UserInterface from '../interfaces/user.interface';
+import { UserInterface } from '../interfaces/user.interface';
 
 class UserModel {
-  async createUser (first_name: string, last_name:string, username: string, email: string, hashedPassword: string) {
+  async createUser (first_name: string, last_name:string, username: string, email: string, hashedPassword: string): Promise<number> {
     let result: number[];
 
     try {
@@ -15,6 +15,9 @@ class UserModel {
         username,
         email,
       });
+
+      return result[0];
+      
     } catch (err: any) {
       if (err.errno === DB_ERROR_DUP_KEY) {
         if (err.sqlMessage.includes('users.users_email_unique')) {
@@ -29,8 +32,6 @@ class UserModel {
 
       }
     }
-    
-    return result;
   }
 
   async updateUserVerifiedActivatedInfo (userId: number, isEmailVerified: boolean, isActive: boolean) {
@@ -43,13 +44,14 @@ class UserModel {
         'is_email_verified': isEmailVerified,
         'is_active': isActive
       });
+    
+      return result;
 
     } catch (err: any) {
 
         throw new Error("Error updating user account. Please try again later.");
     }
     
-    return result;
   }
 
   async getUserInfo (userEmail: string): Promise<UserInterface> {

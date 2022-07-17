@@ -11,9 +11,9 @@ class UserController {
     const {first_name, last_name, username, email, password} = req.body;
 
     try {
-      const result = await UserService.createUser(first_name, last_name, username, email, password);
+      const id = await UserService.createUser(first_name, last_name, username, email, password);
 
-      const userId = result[0];
+      const userId = id;
 
       const confirmationCode = getJwt({userId});
       const confirmUrl = process.env.BASE_URL + `/confirmation-code/${confirmationCode}`;
@@ -26,7 +26,7 @@ class UserController {
       
       res.locals.transporter.sendMail(mailOptions);
       
-      res.status(201).json(result);
+      res.status(201).json(id);
 
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error creating user account.";
@@ -51,6 +51,7 @@ class UserController {
   async login (req: Request, res: Response) {
 
     const {email,  password} = req.body;
+    
     try {
       const result = await UserService.login(email, password);
 
@@ -60,6 +61,23 @@ class UserController {
       const message = err instanceof Error ? err.message : "Error logging in to the account.";
       res.status(500).json(message);
     }
+  }
+
+  async refreshToken (req: Request, res: Response) {
+    const { refreshToken } = req.body;
+
+    try {
+      const token = await UserService.refreshToken(refreshToken);
+
+      res.status(200).json({
+        accssToken: token
+      });
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error refreshing the token.";
+      res.status(500).json(message);
+    }
+
   }
 }
 

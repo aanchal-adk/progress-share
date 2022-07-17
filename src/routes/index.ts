@@ -13,4 +13,7 @@ router.get('/confirmation-code/:token', userController.confirmUserEmail);
 // signin route
 router.post('/login', UserController.login);
 
+//generate new access token from refresh token
+router.post('/refresh-token', UserController.refreshToken);
+
 module.exports = router;

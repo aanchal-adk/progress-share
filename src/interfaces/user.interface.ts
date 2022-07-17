@@ -1,4 +1,4 @@
-export default interface UserInterface {
+export interface UserInterface {
   id: number;
   first_name: string; 
   last_name: string; 
@@ -13,4 +13,16 @@ export default interface UserInterface {
 export interface LoginResponseInterface {
   accessToken: string;
   refreshToken: string;
+};
+
+export interface TokenPayloadInterface {
+  userId: number,
+  email: string
+};
+
+export interface DecodedTokenPayloadInterface {
+  userId: number,
+  email: string,
+  iat: number;
+  exp: number;
 };
