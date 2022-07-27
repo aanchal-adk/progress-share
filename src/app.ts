@@ -1,11 +1,12 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
+import cors from 'cors';
 
 require('dotenv').config();
-
 const router = require("./routes");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const port = 3000;
