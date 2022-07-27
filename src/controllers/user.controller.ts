@@ -40,11 +40,16 @@ class UserController {
     try {
       const result = await UserService.confirmUserEmailAndActivate(token);
 
-      res.status(200).json(result);
+      // res.status(200).json();
+      res.status(200);
+      res.set('Content-Type', 'text/html');
+      res.send(Buffer.from('<h2>Your email has been confirmed successfully. You can now go to our signin page and login.</h2>'));
 
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error updating user account.";
-      res.status(500).json(message);
+      res.status(500);
+      res.set('Content-Type', 'text/html');
+      res.send(Buffer.from('<h2>Your email could not be confirmed.</h2>'));
     }
   }
 
