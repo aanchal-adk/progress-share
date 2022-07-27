@@ -62,6 +62,10 @@ class UserModel {
       .select('*')
       .where({email: userEmail});
 
+      if (result.length === 0) {
+        throw new Error("Couldn't find matching account");
+      }
+
       return result[0];
 
     } catch (err: any) {
