@@ -24,7 +24,6 @@ const transporter = nodemailer.createTransport({
 
 app.use(function(req, res, next) {
   res.locals.transporter = transporter;
-  console.log("first RES:");
   next();
 });
 

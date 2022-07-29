@@ -75,12 +75,13 @@ class UserController {
       const token = await UserService.refreshToken(refreshToken);
 
       res.status(200).json({
-        accssToken: token
+        accessToken: token
       });
 
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error refreshing the token.";
-      res.status(500).json(message);
+
+      res.status(401).json(message);
     }
 
   }

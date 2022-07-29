@@ -13,7 +13,7 @@ export function getJwt (payload: { [key: string]: any; }, expiresIn?: string): s
   return token;
 }
 
-export function verifyJwt (token: string): { [key: string]: any; } | string {
+export function verifyJwt (token: string): jwt.JwtPayload | string {
   const decodedPayload = jwt.verify(token, process.env.JWT_SECRET as string);
 
   return decodedPayload;

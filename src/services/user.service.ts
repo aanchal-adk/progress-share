@@ -53,7 +53,7 @@ class UserService {
       }
 
       const tokenPayload: TokenPayloadInterface = {
-        userId: userInfo.id,
+        userid: userInfo.id,
         email: userInfo.email
       };
       
@@ -80,9 +80,9 @@ class UserService {
 
       const tokenPayload: TokenPayloadInterface = {
         email: decodedPayload.email,
-        userId: decodedPayload.userId
+        userid: decodedPayload.userid
       };
-      
+
       const newAccessToken = getJwt(tokenPayload, process.env.ACCESS_TOKEN_EXPIRES_IN);
 
       return newAccessToken;

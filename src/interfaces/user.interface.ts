@@ -16,12 +16,12 @@ export interface LoginResponseInterface {
 };
 
 export interface TokenPayloadInterface {
-  userId: number,
+  userid: number,
   email: string
 };
 
 export interface DecodedTokenPayloadInterface {
-  userId: number,
+  userid: number,
   email: string,
   iat: number;
   exp: number;

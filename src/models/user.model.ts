@@ -55,10 +55,8 @@ class UserModel {
   }
 
   async getUserInfo (userEmail: string): Promise<UserInterface> {
-    let result: UserInterface[];
-
     try {
-      result = await db('users')
+      let result: UserInterface[] = await db('users')
       .select('*')
       .where({email: userEmail});
 
