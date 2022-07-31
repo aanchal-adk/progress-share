@@ -2,6 +2,7 @@ import express from 'express';
 import authenticate from '../middlewares/auth';
 import UserController from '../controllers/user.controller';
 import TrackerController from '../controllers/tracker.controller';
+import CheckInController from '../controllers/checkin.controller';
 
 const router = express.Router();
 
@@ -21,6 +22,10 @@ router.get('/user-info', authenticate, UserController.getUserInfo);
 
 router.get('/my-trackers', authenticate, TrackerController.fetchMyTrackers);
 
+router.get('/my-tracker-w-checkin', authenticate, TrackerController.fetchMyTrackersWCheckin);
+
 router.post('/new-tracker', authenticate, TrackerController.addNewTracker);
+
+router.post('/add-checkin', authenticate, CheckInController.addCheckin);
 
 module.exports = router;

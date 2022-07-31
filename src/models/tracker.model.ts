@@ -1,5 +1,5 @@
 import db from '../db/db';
-import { TrackerInterface } from '../interfaces/tracker.interface';
+import { TrackerInterface, TrackerWCheckinInterface } from '../interfaces/tracker.interface';
 
 class TrackerModel {
   tableName = 'trackers';
@@ -11,15 +11,39 @@ class TrackerModel {
       .select("*")
       .where({userid: userid});
 
-      if (result.length === 0) {
-        throw new Error("No trackers found.");
-      }
-
-
       return result;
 
     } catch (err) {
       console.log("TRACKER ERR: ", err)
+      throw new Error("Error finding trackers.");
+    }
+  }
+
+  async fetchMyTrackerWithCheckin(userid: number): Promise<TrackerWCheckinInterface[]> {
+    
+    try {
+      const result = await db.raw(
+        `select
+            t.id as id,
+            t.userid as userid,
+            t.title as title,
+            t.total_days as total_days,
+            t.tracker_type_id as tracker_type_id,
+            t.status_id as status_id,
+            t.created_at as created_at,
+            c.day_num as day_num,
+            c.is_checked_in as is_checked_in,
+            c.is_repaired  as is_repaired
+        from trackers t
+        left join checkin c on c.tracker_id = t.id
+        where userid=?`,
+        userid
+      );
+
+      return result[0];
+
+    } catch (err) {
+      console.log("TRACKER ERR: ", err);
       throw new Error("Error finding trackers.");
     }
   }
