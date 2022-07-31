@@ -93,6 +93,17 @@ class UserService {
     }
   }
 
+  async getUserInfo (userEmail: string) {
+    try {
+      const result = await UserModel.getUserInfo(userEmail);
+      
+      return result;
+      
+    } catch (err) {
+      throw new Error('Could not fetch user info. ' + (err instanceof Error && err.message ? err.message: ''));
+    }
+  }
+
 }
 
 export default new UserService();

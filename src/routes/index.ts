@@ -17,6 +17,10 @@ router.post('/login', UserController.login);
 //generate new access token from refresh token
 router.post('/refresh-token', UserController.refreshToken);
 
+router.get('/user-info', authenticate, UserController.getUserInfo);
+
 router.get('/my-trackers', authenticate, TrackerController.fetchMyTrackers);
+
+router.post('/new-tracker', authenticate, TrackerController.addNewTracker);
 
 module.exports = router;

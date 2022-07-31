@@ -14,6 +14,25 @@ class TrackerController {
       res.status(500).json(message);
     }
   }
+
+  async addNewTracker (req: Request, res: Response) {
+    const { title, tracker_type_id, total_days, status_id } = req.body;
+
+    try {
+      const id = await TrackerService.addNewTracker(
+        res.locals.userid as number,
+        title,
+        tracker_type_id,
+        total_days,
+        status_id);
+
+      return res.status(200).json(id);
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error creating progress tracker.";
+      res.status(500).json(message);
+    }
+  }
 }
 
 export default new TrackerController();

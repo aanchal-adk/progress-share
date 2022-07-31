@@ -20,9 +20,10 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
       throw new Error(decodedData);
     }
 
-    const {userid} = decodedData;
-    // add userid to res.locals so that it can be accessed in the next middlewares
+    const {userid, email} = decodedData;
+    // add userid and email to res.locals so that it can be accessed in the next middlewares
     res.locals.userid = userid;
+    res.locals.userEmail = email;
     next();
 
   } catch (err) {

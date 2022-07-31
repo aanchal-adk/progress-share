@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 
 import { getJwt } from  '../helpers/jwt.helper';
 import UserService from '../services/user.service';
+import { UserInfo } from '../interfaces/user.interface';
 
 class UserController {
   async createUser (req: Request, res: Response) {
@@ -84,6 +85,27 @@ class UserController {
       res.status(401).json(message);
     }
 
+  }
+
+  async getUserInfo (req: Request, res: Response) {
+    try {
+      const result = await UserService.getUserInfo(res.locals.userEmail as string);
+
+      const responseData: UserInfo = {
+        firstName: result.first_name,
+        lastName: result.last_name,
+        username: result.username,
+        email: result.email,
+        userid: result.id,
+        points: result.points
+      }
+
+      return res.status(200).json(responseData);
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error fetching user info.";
+      res.status(500).json(message);
+    }
   }
 }
 
