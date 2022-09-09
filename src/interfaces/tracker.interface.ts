@@ -12,6 +12,7 @@ export interface TrackerInterface {
 export interface TrackerWCheckinInterface {
   id: number;
   userid: number;
+  username: string;
   title: string;
   tracker_type_id: number;
   total_days: number;
@@ -25,6 +26,7 @@ export interface TrackerWCheckinInterface {
 export interface CompiledTrackerInterface {
   id: number;
   userid: number;
+  username: string;
   title: string;
   tracker_type_id: number;
   total_days: number;

@@ -7,7 +7,7 @@ class CheckInController {
     
     try {
       const id = await CheckInService.addCheckin(trackerId, dayNumber, isRepaired);
-      console.log(id);
+
       return res.status(200).json(id);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error adding checkin for tracker id: " + trackerId;

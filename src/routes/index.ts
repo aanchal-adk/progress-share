@@ -24,6 +24,8 @@ router.get('/my-trackers', authenticate, TrackerController.fetchMyTrackers);
 
 router.get('/my-tracker-w-checkin', authenticate, TrackerController.fetchMyTrackersWCheckin);
 
+router.get('/public-tracker-w-checkin', authenticate, TrackerController.fetchPublicTrackersWCheckin);
+
 router.post('/new-tracker', authenticate, TrackerController.addNewTracker);
 
 router.post('/add-checkin', authenticate, CheckInController.addCheckin);
